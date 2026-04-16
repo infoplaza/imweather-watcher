@@ -177,7 +177,7 @@ export function GroupSummary({ group, models, showBeta = false }: GroupSummaryPr
         ) : elementIssues.length === 0 ? (
           <div className="flex items-center gap-2 py-6 justify-center text-muted-foreground">
             <Loader2 className="h-5 w-5 animate-spin" />
-            <span className="text-sm">Laden...</span>
+            <span className="text-sm">{t("loading")}</span>
           </div>
         ) : (
           <div className="space-y-2">
@@ -220,11 +220,11 @@ export function GroupSummary({ group, models, showBeta = false }: GroupSummaryPr
                   <CollapsibleContent>
                     <div className="ml-5 border-l pl-3 py-2 space-y-1">
                       <div className="flex items-center gap-2 text-[10px] font-mono text-muted-foreground mb-1.5">
-                        <span className="text-success">{okCount} elements OK</span>
+                        <span className="text-success">{okCount} {t("elementsOk")}</span>
                         {issueElements.length > 0 && (
                           <>
                             <span>·</span>
-                            <span className="text-destructive">{issueElements.length} with issues</span>
+                            <span className="text-destructive">{issueElements.length} {t("withIssues")}</span>
                           </>
                         )}
                       </div>
@@ -232,7 +232,7 @@ export function GroupSummary({ group, models, showBeta = false }: GroupSummaryPr
                       {issueElements.length === 0 ? (
                         <div className="flex items-center gap-1.5 py-1 text-success">
                           <CheckCircle2 className="h-3.5 w-3.5" />
-                          <span className="text-xs font-medium">All elements complete</span>
+                          <span className="text-xs font-medium">{t("allElementsComplete")}</span>
                         </div>
                       ) : (
                         <div className="space-y-1">

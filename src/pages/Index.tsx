@@ -127,7 +127,7 @@ const Index = () => {
               <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />
             )}
             <SettingsDialog />
-            <Link to="/domains" className="p-1.5 rounded text-muted-foreground hover:text-foreground transition-colors" title="Modeldomeinen">
+            <Link to="/domains" className="p-1.5 rounded text-muted-foreground hover:text-foreground transition-colors" title={t("modelDomains")}>
               <Map className="h-4 w-4" />
             </Link>
             <span className="font-mono text-[10px] text-muted-foreground">
@@ -201,7 +201,7 @@ const Index = () => {
               </div>
               <div className="flex items-center gap-1.5">
                 <div className="h-2.5 w-2.5 rounded-sm bg-muted-foreground/30" />
-                <span>{lang === "nl" ? "Niet in gebruik" : "Not in use"}</span>
+                <span>{t("notInUse")}</span>
               </div>
             </div>
           </div>

@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchSingleModel, isTrackedModel } from "@/lib/imweatherApi";
 import { StatusBadge } from "@/components/StatusBadge";
 import { TimeStepGrid } from "@/components/TimeStepGrid";
+import { useI18n } from "@/lib/i18n";
 import "leaflet/dist/leaflet.css";
 
 const API_BASE = "https://api.imweather.com/v0/gridmapdata";
@@ -39,11 +40,11 @@ const CATEGORY_COLORS: Record<string, string> = {
   ocean: "#8b5cf6",
 };
 
-const CATEGORY_LABELS: Record<string, string> = {
-  atmosphere: "Atmosfeer",
-  wave: "Golf",
-  "air quality": "Luchtkwaliteit",
-  ocean: "Oceaan",
+const CATEGORY_LABEL_KEYS: Record<string, string> = {
+  atmosphere: "atmosphere",
+  wave: "wave",
+  "air quality": "airQuality",
+  ocean: "ocean",
 };
 
 async function fetchAllDomains(): Promise<ModelDomain[]> {
@@ -200,6 +201,7 @@ type CategoryKey = string;
 export default function DomainsView() {
   const navigate = useNavigate();
   const logo = useThemedLogo();
+  const { t } = useI18n();
   const [activeCategories, setActiveCategories] = useState<Set<CategoryKey>>(
     new Set(["atmosphere", "wave", "air quality", "ocean"])
   );
@@ -266,7 +268,7 @@ export default function DomainsView() {
         <img src={logo} alt="Logo" className="h-6" />
         <div className="flex items-center gap-2">
           <Layers className="h-4 w-4 text-primary" />
-          <h1 className="text-sm font-semibold">Modeldomeinen</h1>
+          <h1 className="text-sm font-semibold">{t("modelDomains")}</h1>
         </div>
         <div className="ml-auto flex items-center gap-2">
           {categories.map((cat) => (
@@ -284,7 +286,7 @@ export default function DomainsView() {
                   : undefined
               }
             >
-              {CATEGORY_LABELS[cat] ?? cat}
+              {CATEGORY_LABEL_KEYS[cat] ? t(CATEGORY_LABEL_KEYS[cat] as any) : cat}
               <span className="opacity-70">
                 ({domains.filter((d) => d.category === cat).length})
               </span>
@@ -299,7 +301,7 @@ export default function DomainsView() {
         <aside className="w-72 border-r bg-background/50 flex flex-col">
           <div className="px-3 py-2 border-b">
             <p className="text-xs text-muted-foreground">
-              {sortedDomains.length} modellen · hover om domein te tonen
+              {sortedDomains.length} {t("models")} · {t("hoverToShowDomain")}
             </p>
           </div>
           <ScrollArea className="flex-1">
@@ -345,7 +347,7 @@ export default function DomainsView() {
         <div className="flex-1 relative">
           {isLoading && (
             <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-50">
-              <div className="text-sm text-muted-foreground">Laden...</div>
+              <div className="text-sm text-muted-foreground">{t("loading")}</div>
             </div>
           )}
           <MapContainer
@@ -459,21 +461,21 @@ export default function DomainsView() {
               <div className="px-4 py-2.5 space-y-2.5">
                 <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs">
                   <div>
-                    <span className="text-muted-foreground block text-[10px] uppercase tracking-wider">Categorie</span>
+                    <span className="text-muted-foreground block text-[10px] uppercase tracking-wider">{t("category")}</span>
                     <span className="font-medium" style={{ color: CATEGORY_COLORS[selectedDomain.category] }}>
-                      {CATEGORY_LABELS[selectedDomain.category] ?? selectedDomain.category}
+                      {CATEGORY_LABEL_KEYS[selectedDomain.category] ? t(CATEGORY_LABEL_KEYS[selectedDomain.category] as any) : selectedDomain.category}
                     </span>
                   </div>
                   <div>
-                    <span className="text-muted-foreground block text-[10px] uppercase tracking-wider">Regio</span>
+                    <span className="text-muted-foreground block text-[10px] uppercase tracking-wider">{t("region")}</span>
                     <span className="font-medium">{selectedDomain.region}</span>
                   </div>
                   <div>
-                    <span className="text-muted-foreground block text-[10px] uppercase tracking-wider">Resolutie</span>
+                    <span className="text-muted-foreground block text-[10px] uppercase tracking-wider">{t("resolution")}</span>
                     <span className="font-medium">{selectedDomain.resolution}</span>
                   </div>
                   <div>
-                    <span className="text-muted-foreground block text-[10px] uppercase tracking-wider">Domein</span>
+                    <span className="text-muted-foreground block text-[10px] uppercase tracking-wider">{t("domainLabel")}</span>
                     <span className="font-mono text-[10px]">
                       {selectedDomain.boundingBox.south.toFixed(1)}°–{selectedDomain.boundingBox.north.toFixed(1)}°N
                     </span>
@@ -484,12 +486,12 @@ export default function DomainsView() {
                 {isTracked && (
                   <div className="border-t pt-2.5">
                     {isModelLoading ? (
-                      <p className="text-[11px] text-muted-foreground animate-pulse">Laden status...</p>
+                      <p className="text-[11px] text-muted-foreground animate-pulse">{t("loadingStatus")}</p>
                     ) : latestRun ? (
                       <div className="space-y-1.5">
                         <div className="flex items-center justify-between">
                           <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
-                            Laatste run: {latestRun.date} {latestRun.runTime}
+                            {t("latestRun")}: {latestRun.date} {latestRun.runTime}
                           </span>
                         </div>
                         <TimeStepGrid
@@ -509,7 +511,7 @@ export default function DomainsView() {
                         />
                       </div>
                     ) : (
-                      <p className="text-[11px] text-muted-foreground">Geen rundata beschikbaar</p>
+                      <p className="text-[11px] text-muted-foreground">{t("noRunData")}</p>
                     )}
                   </div>
                 )}
@@ -517,7 +519,7 @@ export default function DomainsView() {
                 {!isTracked && (
                   <div className="border-t pt-2">
                     <p className="text-[10px] text-muted-foreground italic">
-                      Dit model wordt niet gemonitord
+                      {t("notMonitored")}
                     </p>
                   </div>
                 )}

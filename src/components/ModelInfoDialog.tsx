@@ -11,6 +11,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ForecastTimeline } from "@/components/ForecastTimeline";
 import { loadStatusMap, getLastCheckedAt } from "@/lib/modelStatusTracker";
+import { useI18n } from "@/lib/i18n";
 
 const API_BASE = "https://api.imweather.com/v0/gridmapdata";
 
@@ -44,9 +45,9 @@ async function fetchModelInfo(modelId: string): Promise<ModelInfoResponse> {
   return res.json();
 }
 
-function formatTimestamp(ts: number): string {
+function formatTimestamp(ts: number, locale: string): string {
   const d = new Date(ts * 1000);
-  return d.toLocaleString("nl-NL", {
+  return d.toLocaleString(locale === "nl" ? "nl-NL" : "en-GB", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -59,6 +60,7 @@ function formatTimestamp(ts: number): string {
 
 
 export function ModelInfoDialog({ modelId, modelName, children }: { modelId: string; modelName: string; children?: React.ReactNode }) {
+  const { t, lang } = useI18n();
   const [open, setOpen] = useState(false);
 
   const { data, isLoading, error } = useQuery({
@@ -92,7 +94,7 @@ export function ModelInfoDialog({ modelId, modelName, children }: { modelId: str
         {children || (
           <button
             className="p-0.5 rounded text-muted-foreground/50 hover:text-muted-foreground transition-colors"
-            title="Model informatie"
+            title={t("modelInfo")}
           >
             <Info className="h-3.5 w-3.5" />
           </button>
@@ -114,7 +116,7 @@ export function ModelInfoDialog({ modelId, modelName, children }: { modelId: str
 
         {error && (
           <p className="text-sm text-destructive py-4">
-            Fout bij ophalen modelinformatie.
+            {t("errorLoadingModelInfo")}
           </p>
         )}
 
@@ -125,7 +127,7 @@ export function ModelInfoDialog({ modelId, modelName, children }: { modelId: str
               <div className="rounded-md border bg-secondary/30 p-3 space-y-1.5">
                 <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <Activity className="h-3 w-3" />
-                  Laatste info
+                  {t("latestInfo")}
                 </h4>
                 {statusEntry ? (
                   <div className="text-sm space-y-1">
@@ -136,7 +138,7 @@ export function ModelInfoDialog({ modelId, modelName, children }: { modelId: str
                     </p>
                     <p className="flex items-center gap-1.5">
                       <Gauge className="h-3 w-3 text-muted-foreground/70 shrink-0" />
-                      <span className="text-muted-foreground">Voortgang:</span>
+                      <span className="text-muted-foreground">{t("progress")}:</span>
                       <span className="font-mono font-medium">
                         {statusEntry.availableCount}/{statusEntry.totalSteps}
                         {statusEntry.totalSteps > 0 && ` (${Math.round((statusEntry.availableCount / statusEntry.totalSteps) * 100)}%)`}
@@ -144,25 +146,25 @@ export function ModelInfoDialog({ modelId, modelName, children }: { modelId: str
                     </p>
                     <p className="flex items-center gap-1.5">
                       <Calendar className="h-3 w-3 text-muted-foreground/70 shrink-0" />
-                      <span className="text-muted-foreground">Laatste wijziging:</span>
+                      <span className="text-muted-foreground">{t("lastChange")}:</span>
                       <span className="font-mono font-medium">
-                        {new Date(statusEntry.lastChangedAt).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit", timeZone: "UTC", timeZoneName: "short" })}
+                        {new Date(statusEntry.lastChangedAt).toLocaleTimeString(lang === "nl" ? "nl-NL" : "en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "UTC", timeZoneName: "short" })}
                       </span>
                     </p>
                     <p className="flex items-center gap-1.5">
                       <Clock className="h-3 w-3 text-muted-foreground/70 shrink-0" />
-                      <span className="text-muted-foreground">Laatste check:</span>
+                      <span className="text-muted-foreground">{t("lastCheck")}:</span>
                       <span className="font-mono font-medium">
                         {(() => {
                           const checked = getLastCheckedAt();
                           if (!checked) return "—";
-                          return new Date(checked).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit", timeZone: "UTC", timeZoneName: "short" });
+                          return new Date(checked).toLocaleTimeString(lang === "nl" ? "nl-NL" : "en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "UTC", timeZoneName: "short" });
                         })()}
                       </span>
                     </p>
                   </div>
                 ) : (
-                  <p className="text-xs text-muted-foreground">Nog geen statusdata beschikbaar</p>
+                  <p className="text-xs text-muted-foreground">{t("noStatusData")}</p>
                 )}
               </div>
 
@@ -171,13 +173,13 @@ export function ModelInfoDialog({ modelId, modelName, children }: { modelId: str
                 <div className="rounded-md border bg-secondary/30 p-3 space-y-1.5">
                   <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                     <Globe className="h-3 w-3" />
-                    Algemene info
+                    {t("generalInfo")}
                   </h4>
                   <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                    <InfoRow icon={Building2} label="Instituut" value={runDesc.institute} />
-                    <InfoRow icon={Globe} label="Regio" value={runDesc.region} />
-                    <InfoRow icon={Gauge} label="Resolutie" value={runDesc.resolution} />
-                    <InfoRow icon={Layers} label="Type" value={runDesc.type} />
+                    <InfoRow icon={Building2} label={t("institute")} value={runDesc.institute} />
+                    <InfoRow icon={Globe} label={t("region")} value={runDesc.region} />
+                    <InfoRow icon={Gauge} label={t("resolution")} value={runDesc.resolution} />
+                    <InfoRow icon={Layers} label={t("type")} value={runDesc.type} />
                   </div>
                 </div>
               )}
@@ -187,7 +189,7 @@ export function ModelInfoDialog({ modelId, modelName, children }: { modelId: str
                 <div className="rounded-md border bg-secondary/30 p-3 space-y-1.5">
                   <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                     <Calendar className="h-3 w-3" />
-                    Beschikbare runs
+                    {t("availableRuns")}
                   </h4>
                   <div className="flex flex-wrap gap-1.5">
                     {data.metadata.runtimeshours.map((h) => (

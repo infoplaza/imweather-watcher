@@ -1,4 +1,5 @@
 import { Clock } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 interface SequenceSegment {
   from: number;
@@ -36,33 +37,33 @@ function parseSequences(sequences: string[]): SequenceSegment[] {
   return segments;
 }
 
-function formatInterval(step: number): string {
-  if (step === 1) return "elk uur";
-  return `elke ${step} uur`;
-}
-
-function hoursToDays(hours: number): string {
-  const days = Math.round((hours / 24) * 10) / 10;
-  if (days === 1) return "1 dag";
-  return `${days} dagen`;
-}
-
 export function ForecastTimeline({ sequences }: { sequences: string[] }) {
+  const { t } = useI18n();
   const segments = parseSequences(sequences);
   if (segments.length === 0) return null;
 
   const maxHour = Math.max(...segments.map((s) => s.to));
   const totalSteps = segments.reduce((sum, s) => sum + s.count, 0);
 
+  const formatInterval = (step: number): string => {
+    if (step === 1) return t("everyHour");
+    return t("everyNHours").replace("{n}", String(step));
+  };
+
+  const hoursToDays = (hours: number): string => {
+    const days = Math.round((hours / 24) * 10) / 10;
+    return `${days} ${days === 1 ? t("day") : t("days")}`;
+  };
+
   return (
     <div className="rounded-md border bg-secondary/30 p-3 space-y-3">
       <div className="flex items-center justify-between">
         <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
           <Clock className="h-3 w-3" />
-          Voorspellingstijdlijn
+          {t("forecastTimeline")}
         </h4>
         <span className="text-xs font-medium text-foreground">
-          Tot <strong>{hoursToDays(maxHour)}</strong> vooruit
+          {t("upTo")} <strong>{hoursToDays(maxHour)}</strong> {t("ahead")}
         </span>
       </div>
 
@@ -90,14 +91,14 @@ export function ForecastTimeline({ sequences }: { sequences: string[] }) {
               <span className="text-xs font-medium">{seg.from}h – {seg.to}h</span>
             </div>
             <p className="text-[11px] text-muted-foreground pl-3.5">
-              {formatInterval(seg.step)} · {seg.count} stappen
+              {formatInterval(seg.step)} · {seg.count} {t("steps")}
             </p>
           </div>
         ))}
       </div>
 
       <p className="text-[11px] text-muted-foreground text-right">
-        Totaal: {totalSteps} tijdstappen
+        {t("totalTimesteps").replace("{n}", String(totalSteps))}
       </p>
     </div>
   );

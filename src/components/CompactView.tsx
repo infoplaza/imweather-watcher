@@ -85,9 +85,7 @@ export function CompactView({ models, showBeta, onModelClick }: CompactViewProps
       const fileName = `IMWeather Overview ${ts}.png`;
 
       const wantDownload = window.confirm(
-        lang === "nl"
-          ? "Afbeelding gekopieerd naar klembord.\nWil je het ook downloaden?"
-          : "Image copied to clipboard.\nDo you also want to download it?"
+        t("imageCopiedConfirm")
       );
       if (wantDownload) {
         const url = URL.createObjectURL(blob);
@@ -109,7 +107,7 @@ export function CompactView({ models, showBeta, onModelClick }: CompactViewProps
       <div className="flex justify-end">
         <Button variant="outline" size="sm" className="h-7 gap-1.5 text-xs" onClick={handleShareAll} disabled={isSharing}>
           {isSharing ? <Loader2 className="h-3 w-3 animate-spin" /> : <Share2 className="h-3 w-3" />}
-          {lang === "nl" ? "Deel overzicht" : "Share overview"}
+          {t("shareOverview")}
         </Button>
       </div>
 

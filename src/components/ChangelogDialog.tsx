@@ -10,9 +10,11 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { APP_VERSION, CHANGELOG } from "@/lib/version";
+import { useI18n } from "@/lib/i18n";
 
 export function ChangelogDialog() {
   const [open, setOpen] = useState(false);
+  const { t, lang } = useI18n();
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -25,7 +27,7 @@ export function ChangelogDialog() {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-base">
             <FileText className="h-4 w-4 text-primary" />
-            Changelog
+            {t("changelog")}
           </DialogTitle>
         </DialogHeader>
         <ScrollArea className="flex-1 -mr-4 pr-4">
@@ -44,7 +46,7 @@ export function ChangelogDialog() {
                   {entry.changes.map((change, i) => (
                     <li key={i} className="text-sm text-muted-foreground flex gap-2">
                       <span className="text-primary/60 shrink-0">•</span>
-                      <span>{change}</span>
+                      <span>{change[lang]}</span>
                     </li>
                   ))}
                 </ul>

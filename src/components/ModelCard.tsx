@@ -83,7 +83,7 @@ export function ModelCard({ model, elementOverride }: { model: WeatherModel; ele
       const fileName = `${model.name} ${ts}.png`;
 
       // Ask user if they also want to download
-      const wantDownload = window.confirm("Afbeelding gekopieerd naar klembord.\nWil je het ook downloaden?");
+      const wantDownload = window.confirm(t("imageCopiedConfirm"));
       if (wantDownload) {
         // Try native Web Share API (works on mobile for WhatsApp etc.)
         if (navigator.share && navigator.canShare) {
