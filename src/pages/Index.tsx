@@ -8,7 +8,7 @@ import { GroupSummary } from "@/components/GroupSummary";
 import { AvailabilityGauge } from "@/components/AvailabilityGauge";
 import { CompactView } from "@/components/CompactView";
 import { StaleModelsAlert } from "@/components/StaleModelsAlert";
-import { Activity, RefreshCw, Loader2, Sparkles, ChevronDown, LayoutList, Star, Thermometer, CloudRain, Wind, Map } from "lucide-react";
+import { Activity, RefreshCw, Loader2, Sparkles, Layers, ChevronDown, LayoutList, Star, Thermometer, CloudRain, Wind, Map } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useMemo } from "react";
 import { useWeatherModels } from "@/hooks/useWeatherModels";
@@ -300,8 +300,9 @@ const Index = () => {
         {viewMode === "detail" && (
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as GroupKey)}>
             {tabGroups.map(({ key, models, cols }) => {
-              const regularModels = models.filter(m => (showBeta || !m.beta) && !m.ai);
-              const aiModels = key === "atmosphere" ? models.filter(m => m.ai && (showBeta || !m.beta)) : [];
+              const regularModels = models.filter(m => (showBeta || !m.beta) && !m.ai && !m.ensemble);
+              const ensembleModels = models.filter(m => m.ensemble && (showBeta || !m.beta) && !m.ai);
+              const aiModels = key === "atmosphere" ? models.filter(m => m.ai && (showBeta || !m.beta) && !m.ensemble) : [];
 
               return (
                 <TabsContent key={key} value={key} className="mt-4">
@@ -311,6 +312,22 @@ const Index = () => {
                     storageKey={key}
                     elementOverride={key === "atmosphere" ? atmosphereElement : undefined}
                   />
+
+                  {ensembleModels.length > 0 && (
+                    <div className="mt-4">
+                      <div className="flex items-center gap-2 w-full rounded-lg border border-dashed border-violet-500/30 bg-violet-500/5 p-3">
+                        <Layers className="h-3.5 w-3.5 text-violet-600 dark:text-violet-400" />
+                        <span className="text-sm font-semibold text-violet-700 dark:text-violet-300">{t("ensembleModels")}</span>
+                        <span className="font-mono text-[10px] text-muted-foreground">{ensembleModels.length} {t("models")}</span>
+                      </div>
+                      <SortableModelGrid
+                        models={ensembleModels}
+                        cols={cols}
+                        storageKey={`${key}-ensemble`}
+                        elementOverride={key === "atmosphere" ? atmosphereElement : undefined}
+                      />
+                    </div>
+                  )}
 
                   {aiModels.length > 0 && (
                     <div className="mt-4">

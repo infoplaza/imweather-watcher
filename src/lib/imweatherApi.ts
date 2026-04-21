@@ -179,6 +179,23 @@ const MODEL_META: Record<string, ModelMeta> = {
     apiElement: "temperature", apiLevel: "2m",
     imweather: { model: "dwdiconeu", element: "temperature", level: "2m" },
   },
+  dwdiconeuensemble: {
+    name: "ICON EU ENS", group: "atmosphere", testElement: "Temperatuur (2m)",
+    resolution: "6.5km", source: "DWD", ensemble: true,
+    apiId: "dwdiconeuensemble",
+    stepRanges: [
+      { fromHour: 0, toHour: 78, stepSize: 1 },
+      { fromHour: 78, toHour: 120, stepSize: 3 },
+    ],
+    stepRangesByRunHour: {
+      "03": uniform(30, 1),
+      "09": uniform(30, 1),
+      "15": uniform(30, 1),
+      "21": uniform(30, 1),
+    },
+    apiElement: "temperature", apiLevel: "2m",
+    imweather: { model: "dwdiconeuensemble", element: "temperature", level: "2m" },
+  },
   "nam-conus": {
     name: "NAM CONUS", group: "atmosphere", testElement: "Temperatuur (2m)",
     resolution: "3km", source: "NOAA",
@@ -208,6 +225,14 @@ const MODEL_META: Record<string, ModelMeta> = {
     variableRunLength: true,
     apiElement: "temperature", apiLevel: "2m",
     imweather: { model: "dwdicond2ruc", element: "temperature", level: "2m" },
+  },
+  dwdicond2ensemble: {
+    name: "ICON-D2 ENS", group: "atmosphere", testElement: "Temperatuur (2m)",
+    resolution: "2.2km", source: "DWD", ensemble: true,
+    apiId: "dwdicond2ensemble",
+    stepRanges: uniform(48, 1),
+    apiElement: "temperature", apiLevel: "2m",
+    imweather: { model: "dwdicond2ensemble", element: "temperature", level: "2m" },
   },
   optimal: {
     name: "Optimal", group: "atmosphere", testElement: "Temperatuur (2m)",
@@ -324,6 +349,19 @@ const MODEL_META: Record<string, ModelMeta> = {
     variableRunLength: true,
     apiElement: "waveheight_significant",
     imweather: { model: "ecmwfwamglobal", element: "waveheight_significant", level: "" },
+  },
+  ecmwfwamglobalensemble: {
+    name: "ECMWF WAM ENS", group: "wave", testElement: "Significante golfhoogte (Hs)",
+    resolution: "0.1°", source: "ECMWF", ensemble: true,
+    apiId: "ecmwfwamglobalensemble",
+    stepRanges: [
+      { fromHour: 0, toHour: 90, stepSize: 1 },
+      { fromHour: 90, toHour: 144, stepSize: 3 },
+      { fromHour: 144, toHour: 240, stepSize: 6 },
+    ],
+    variableRunLength: true,
+    apiElement: "waveheight_significant",
+    imweather: { model: "ecmwfwamglobalensemble", element: "waveheight_significant", level: "" },
   },
   "imw-ww3-eushelf": {
     name: "WW3 EU Shelf", group: "wave", testElement: "Significante golfhoogte (Hs)",
